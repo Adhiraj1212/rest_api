@@ -143,4 +143,38 @@ function loginUser($username, $password){
 }
 
 
+
+function registerUser($username, $email, $password, $firstName, $lastName, $address, $phone)
+{
+    global $conn;
+
+    // Check if the username or email already exists in the database
+    $stmt = $conn->prepare("SELECT * FROM users WHERE UserName = ? OR Email = ?");
+    $stmt->bind_param("ss", $username, $email);
+    $stmt->execute();
+    $result = $stmt->get_result();
+
+    if ($result->num_rows > 0) {
+        return "Username or email already exists";
+    } else {
+        // If the username or email doesn't exist, proceed with registration
+        $stmt = $conn->prepare("INSERT INTO users (UserName, Email, Password, FirstName, LastName, Address, Phone) VALUES (?, ?, ?, ?, ?, ?, ?)");
+        $stmt->bind_param("sssssss", $username, $email, $password, $firstName, $lastName, $address, $phone);
+
+        if ($stmt->execute()) {
+            return json_encode([
+                "status" => 200,
+                "message" => "Registration Successful",
+            ]);
+        } else {
+            return json_encode([
+                "status" => 102,
+                "message" => "Registration Failed",
+                "error" => $stmt->error,
+            ]);
+        }
+    }
+}
+
+
 ?>
