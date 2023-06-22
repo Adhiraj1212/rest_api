@@ -29,14 +29,16 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 // Get JSON data from POST request
                 $data = json_decode(file_get_contents("php://input"));
 
-                if (!empty($data->ProductID) && !empty($data->ProductName) && !empty($data->Description)) {
+                if (!empty($data->ProductID) && !empty($data->ProductName) && !empty($data->Description) && !empty($data->SKU) && !empty($data->Price)) {
 
                     $productID = $data->ProductID;
                     $productName = $data->ProductName;
                     $description = $data->Description;
+                    $price = $data->Price;
+                    $sku = $data->SKU;
 
                     // insert into database
-                    $sql = "INSERT INTO products (VendorID, ProductID, ProductName, Description, CreatedAt) VALUES ('$vendorId', '$productID', '$productName', '$description', NOW())";
+                    $sql = "INSERT INTO products (VendorID, ProductID, ProductName, Description,Price, sku, CreatedAt) VALUES ('$vendorId', '$productID', '$productName', '$description','$price','$sku', NOW())";
 
                     if ($conn->query($sql) === TRUE) {
                         echo json_encode(["message" => "New record created successfully"]);
